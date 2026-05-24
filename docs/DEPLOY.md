@@ -39,6 +39,9 @@ Ao importar o repositório na Vercel:
 
 O que já está preparado no código para a Vercel:
 
+- Há um **`apps/admin/vercel.json`** que fixa `framework: nextjs` e
+  `buildCommand: next build`. O **Install Command** é deixado para a detecção de
+  monorepo da Vercel (instala na raiz, resolvendo os workspaces).
 - `packages/database` tem um script **`postinstall: prisma generate`**, então o
   Prisma Client é gerado em todo build (evita o erro de client desatualizado em
   builds com cache).
