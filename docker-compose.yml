@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: vynce-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: vynce
+      POSTGRES_PASSWORD: vynce_dev_pwd
+      POSTGRES_DB: vynce
+    ports:
+      - '5432:5432'
+    volumes:
+      - vynce_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U vynce']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  vynce_pgdata:
