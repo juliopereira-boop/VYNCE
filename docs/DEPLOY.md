@@ -4,28 +4,43 @@ Este guia descreve como publicar o painel **`apps/admin`** na Vercel. Como o
 projeto usa **Prisma + PostgreSQL**, você precisa de um banco PostgreSQL
 acessível pela internet (a Vercel é serverless e não hospeda banco).
 
-## 1. Provisione um PostgreSQL
+## 1. Provisione um PostgreSQL (Supabase)
 
-Use qualquer provedor gerenciado. Opções comuns:
+Crie um projeto em **https://supabase.com**. Em **Project Settings → Database**
+você encontra duas strings de conexão que vamos usar:
 
-- **Vercel Postgres** (Neon por baixo) — integra direto no projeto Vercel.
-- **Neon** (https://neon.tech) — free tier generoso, pooler embutido.
-- **Supabase** (https://supabase.com).
+1. **Connection pooling → Transaction mode** (porta **6543**) — para o runtime
+   serverless. Algo como:
+   ```
+   postgresql://postgres.<REF>:<SENHA>@aws-0-<região>.pooler.supabase.com:6543/postgres
+   ```
+2. **Direct connection** (porta **5432**) — para as migrations:
+   ```
+   postgresql://postgres.<REF>:<SENHA>@aws-0-<região>.pooler.supabase.com:5432/postgres
+   ```
+   (ou `db.<REF>.supabase.co:5432`, conforme o painel).
 
-> **Importante (serverless):** funções serverless abrem muitas conexões curtas.
-> Use a **connection string com pooling** (PgBouncer). No Neon/Vercel Postgres é
-> a URL marcada como _Pooled_. Se necessário, acrescente
-> `?pgbouncer=true&connection_limit=1` à `DATABASE_URL`.
+> **Por que duas?** Funções serverless abrem muitas conexões curtas, então o
+> runtime usa o **pooler** (6543). Já as migrations precisam de uma conexão
+> **direta** (5432) — o pooler em transaction mode não as suporta bem.
+
+Outros provedores (Neon, Vercel Postgres) seguem a mesma ideia: URL _pooled_
+para runtime, URL _direct_ para migrations.
 
 ## 2. Variáveis de ambiente na Vercel
 
-No projeto Vercel → **Settings → Environment Variables**, defina:
+No projeto Vercel → **Settings → Environment Variables**, defina (Production +
+Preview):
 
-| Variável       | Valor                                                            |
-| -------------- | --------------------------------------------------------------- |
-| `DATABASE_URL` | string de conexão **pooled** do seu PostgreSQL (`postgresql://…`) |
+| Variável       | Valor                                                                                  |
+| -------------- | -------------------------------------------------------------------------------------- |
+| `DATABASE_URL` | string **pooled** (6543) **+** `?pgbouncer=true&connection_limit=1` no final           |
+| `DIRECT_URL`   | string **direct** (5432)                                                               |
 
-Aplique aos ambientes **Production**, **Preview** e **Development**.
+Exemplo de `DATABASE_URL`:
+```
+postgresql://postgres.<REF>:<SENHA>@aws-0-<região>.pooler.supabase.com:6543/postgres?pgbouncer=true&connection_limit=1
+```
 
 ## 3. Configuração do projeto Vercel (monorepo)
 
@@ -58,9 +73,10 @@ O build da Vercel **não** roda migrations. Rode uma vez (e a cada mudança de
 schema), apontando para o banco de produção:
 
 ```bash
-# Use a connection string DIRETA (não-pooled) para migrar, se o provedor oferecer.
-export DATABASE_URL="postgresql://…(produção)…"
-npm run db:deploy        # prisma migrate deploy
+# Aponte para o banco de produção. A migration usa a DIRECT_URL.
+export DATABASE_URL="postgresql://…pooler…:6543/postgres?pgbouncer=true&connection_limit=1"
+export DIRECT_URL="postgresql://…:5432/postgres"
+npm run db:deploy        # prisma migrate deploy (usa DIRECT_URL)
 # (opcional) popular dados de exemplo:
 npm run db:seed
 ```
