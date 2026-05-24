@@ -4,6 +4,7 @@ import { deleteAgency, getAgencyById, updateAgency } from '@/server/agencies';
 import { ConflictError, NotFoundError, zodErrorToFieldErrors } from '@/server/errors';
 import { toAgencyDTO } from '@/lib/dto';
 
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 type Ctx = { params: Promise<{ id: string }> };

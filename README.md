@@ -107,6 +107,7 @@ O painel ficará disponível em **http://localhost:3000**.
 
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — decisões de arquitetura e fluxo de dados.
 - [`docs/DESIGN_SYSTEM.md`](docs/DESIGN_SYSTEM.md) — paleta, tipografia e componentes.
+- [`docs/DEPLOY.md`](docs/DEPLOY.md) — deploy na **Vercel** (banco, env vars, migrations).
 - READMEs de cada pacote em `packages/*` e `apps/*`.
 
 ## 🗺️ Roadmap (próximas fases)

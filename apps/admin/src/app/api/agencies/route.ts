@@ -4,6 +4,7 @@ import { createAgency, listAgencies } from '@/server/agencies';
 import { ConflictError, zodErrorToFieldErrors } from '@/server/errors';
 import { toAgencyDTO } from '@/lib/dto';
 
+export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 
 export async function GET(request: NextRequest) {
