@@ -1,139 +1,203 @@
-import { Building2, Home, Layers, Plus, ShieldCheck } from 'lucide-react';
+import {
+  BarChart3,
+  Building2,
+  Home,
+  LifeBuoy,
+  Mail,
+  Plus,
+  Users,
+} from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
-import { Button, Card, CardBody } from '@vynce/ui';
+import { cn } from '@vynce/ui';
 import { PageHeader } from '@/components/page-header';
-import { EntityTypeBadge } from '@/components/entity-type-badge';
 import { getAgencyStats, listAgencies } from '@/server/agencies';
-import { formatDate } from '@/lib/format';
 
-export const metadata: Metadata = { title: 'Dashboard' };
+export const metadata: Metadata = { title: 'Cadastros' };
 export const dynamic = 'force-dynamic';
 
-function StatCard({
-  label,
-  value,
-  icon: Icon,
-  accent,
-}: {
-  label: string;
-  value: number;
+type Feature = {
+  title: string;
+  description: string;
+  href?: string;
+  soon?: boolean;
   icon: typeof Building2;
-  accent: string;
-}) {
+};
+
+const FEATURES: Feature[] = [
+  {
+    title: 'Imobiliárias & Houses',
+    description: 'Listar, buscar e gerenciar entidades cadastradas.',
+    href: '/imobiliarias',
+    icon: Building2,
+  },
+  {
+    title: 'Nova Imobiliária/House',
+    description: 'Cadastrar uma nova entidade e seu gerente.',
+    href: '/imobiliarias/nova',
+    icon: Plus,
+  },
+  {
+    title: 'Corretores',
+    description: 'Gestão de corretores vinculados.',
+    soon: true,
+    icon: Users,
+  },
+  {
+    title: 'Relatórios',
+    description: 'Indicadores e exportações.',
+    soon: true,
+    icon: BarChart3,
+  },
+];
+
+function SectionTitle({ children }: { children: React.ReactNode }) {
+  return <h2 className="mb-3 font-display text-base font-bold text-slate-800">{children}</h2>;
+}
+
+function IconTile({ icon: Icon }: { icon: typeof Building2 }) {
   return (
-    <Card>
-      <CardBody className="flex items-center gap-4">
-        <span className={`flex h-11 w-11 items-center justify-center rounded-xl ${accent}`}>
-          <Icon className="h-5 w-5" />
-        </span>
-        <div>
-          <p className="text-sm text-slate-500">{label}</p>
-          <p className="text-2xl font-bold text-slate-900">{value}</p>
-        </div>
-      </CardBody>
-    </Card>
+    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-brand-500 to-brand-700 text-white shadow-sm">
+      <Icon className="h-5 w-5" />
+    </span>
   );
 }
 
-export default async function DashboardPage() {
+function FeatureCard({ feature }: { feature: Feature }) {
+  const inner = (
+    <div
+      className={cn(
+        'group flex h-full items-center gap-4 rounded-xl border bg-white p-4 transition-all',
+        feature.soon
+          ? 'border-slate-200'
+          : 'border-slate-200 hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-card',
+      )}
+    >
+      <IconTile icon={feature.icon} />
+      <div className="min-w-0">
+        <p className="flex items-center gap-2 font-semibold text-slate-800">
+          <span className="truncate">{feature.title}</span>
+          {feature.soon && (
+            <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-400">
+              em breve
+            </span>
+          )}
+        </p>
+        <p className="mt-0.5 text-xs text-slate-500">{feature.description}</p>
+      </div>
+    </div>
+  );
+
+  if (feature.soon) {
+    return <div className="cursor-not-allowed opacity-70">{inner}</div>;
+  }
+  return (
+    <Link href={feature.href!} className="block">
+      {inner}
+    </Link>
+  );
+}
+
+export default async function CadastrosHome() {
   const [stats, recent] = await Promise.all([
     getAgencyStats(),
-    listAgencies({ page: 1, pageSize: 5 }),
+    listAgencies({ page: 1, pageSize: 4 }),
   ]);
 
   return (
     <>
       <PageHeader
-        title="Dashboard"
-        description="Visão geral das imobiliárias e houses cadastradas na plataforma."
-        actions={
-          <Link href="/imobiliarias/nova">
-            <Button>
-              <Plus className="h-4 w-4" />
-              Nova Imobiliária/House
-            </Button>
-          </Link>
-        }
+        title="Cadastros"
+        description="Aqui você encontra as funcionalidades do módulo de cadastros."
       />
 
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          label="Total cadastrado"
-          value={stats.total}
-          icon={Layers}
-          accent="bg-brand-50 text-brand-600"
-        />
-        <StatCard
-          label="Imobiliárias"
-          value={stats.imobiliarias}
-          icon={Building2}
-          accent="bg-brand-50 text-brand-700"
-        />
-        <StatCard
-          label="Houses"
-          value={stats.houses}
-          icon={Home}
-          accent="bg-amber-50 text-amber-600"
-        />
-        <StatCard
-          label="Ativas"
-          value={stats.active}
-          icon={ShieldCheck}
-          accent="bg-amber-50 text-amber-600"
-        />
-      </div>
-
-      <Card className="mt-6">
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
-          <h3 className="text-base font-semibold text-slate-900">Cadastros recentes</h3>
-          <Link
-            href="/imobiliarias"
-            className="text-brand-600 hover:text-brand-700 text-sm font-medium"
-          >
-            Ver todos
-          </Link>
-        </div>
-        <CardBody className="p-0">
-          {recent.items.length === 0 ? (
-            <div className="px-6 py-12 text-center">
-              <p className="text-sm text-slate-500">
-                Nenhuma imobiliária ou house cadastrada ainda.
-              </p>
-              <Link href="/imobiliarias/nova" className="mt-3 inline-block">
-                <Button size="sm" variant="subtle">
-                  <Plus className="h-4 w-4" />
-                  Cadastrar a primeira
-                </Button>
-              </Link>
-            </div>
-          ) : (
-            <ul className="divide-y divide-slate-100">
-              {recent.items.map((agency) => (
-                <li key={agency.id}>
-                  <Link
-                    href={`/imobiliarias/${agency.id}`}
-                    className="flex items-center justify-between gap-4 px-6 py-3.5 transition-colors hover:bg-slate-50"
-                  >
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-slate-900">{agency.tradeName}</p>
-                      <p className="truncate text-sm text-slate-500">
-                        {agency.city}/{agency.state}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-4">
-                      <EntityTypeBadge type={agency.type} />
-                      <span className="hidden text-sm text-slate-400 sm:block">
-                        {formatDate(agency.createdAt)}
-                      </span>
-                    </div>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+      <div className="grid gap-6 lg:grid-cols-3">
+        <div className="space-y-8 lg:col-span-2">
+          {recent.items.length > 0 && (
+            <section>
+              <SectionTitle>Seus últimos acessos</SectionTitle>
+              <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                {recent.items.slice(0, 3).map((agency) => {
+                  const Icon = agency.type === 'HOUSE' ? Home : Building2;
+                  return (
+                    <Link
+                      key={agency.id}
+                      href={`/imobiliarias/${agency.id}`}
+                      className="group flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-4 transition-all hover:-translate-y-0.5 hover:border-brand-300 hover:shadow-card"
+                    >
+                      <IconTile icon={Icon} />
+                      <div className="min-w-0">
+                        <p className="truncate font-semibold text-slate-800">{agency.tradeName}</p>
+                        <p className="truncate text-xs text-slate-500">
+                          {agency.city}/{agency.state}
+                        </p>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </section>
           )}
-        </CardBody>
-      </Card>
+
+          <section>
+            <SectionTitle>Funcionalidades</SectionTitle>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {FEATURES.map((feature) => (
+                <FeatureCard key={feature.title} feature={feature} />
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <aside className="space-y-6">
+          <div className="rounded-xl border border-slate-200 bg-white shadow-card">
+            <div className="border-b border-slate-100 px-5 py-3">
+              <h3 className="font-display text-sm font-bold text-slate-800">Resumo</h3>
+            </div>
+            <dl className="divide-y divide-slate-100">
+              {[
+                { label: 'Total cadastrado', value: stats.total },
+                { label: 'Imobiliárias', value: stats.imobiliarias },
+                { label: 'Houses', value: stats.houses },
+                { label: 'Ativas', value: stats.active },
+              ].map((row) => (
+                <div key={row.label} className="flex items-center justify-between px-5 py-2.5">
+                  <dt className="text-sm text-slate-500">{row.label}</dt>
+                  <dd className="font-display text-lg font-bold text-slate-800">{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+          </div>
+
+          <div className="rounded-xl border border-brand-100 bg-brand-50/60 p-5">
+            <div className="mb-2 flex items-center gap-2 text-brand-800">
+              <LifeBuoy className="h-5 w-5" />
+              <h3 className="font-display text-sm font-bold uppercase tracking-wide">
+                Posso te ajudar?
+              </h3>
+            </div>
+            <p className="text-sm text-slate-600">
+              Precisa de ajuda com os cadastros? Comece criando sua primeira imobiliária ou house.
+            </p>
+            <div className="mt-4 space-y-2">
+              <Link
+                href="/imobiliarias/nova"
+                className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand-700 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-brand-800"
+              >
+                <Plus className="h-4 w-4" />
+                Nova Imobiliária/House
+              </Link>
+              <a
+                href="mailto:suporte@vynce.com.br"
+                className="flex w-full items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50"
+              >
+                <Mail className="h-4 w-4" />
+                Falar com suporte
+              </a>
+            </div>
+          </div>
+        </aside>
+      </div>
     </>
   );
 }
