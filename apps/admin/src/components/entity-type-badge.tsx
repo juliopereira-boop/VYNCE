@@ -6,7 +6,7 @@ export function EntityTypeBadge({ type }: { type: EntityTypeValue }) {
   const isHouse = type === 'HOUSE';
   const Icon = isHouse ? Home : Building2;
   return (
-    <Badge tone={isHouse ? 'emerald' : 'brand'}>
+    <Badge tone={isHouse ? 'amber' : 'brand'}>
       <Icon className="h-3 w-3" />
       {ENTITY_TYPE_LABELS[type]}
     </Badge>

@@ -23,12 +23,14 @@ const NAV: NavItem[] = [
 function Logo() {
   return (
     <Link href="/dashboard" className="flex items-center gap-2.5">
-      <span className="from-brand-500 to-brand-700 flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br text-lg font-bold text-white shadow-sm">
+      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-lg font-bold text-brand-700 shadow-sm">
         V
       </span>
       <div className="leading-tight">
-        <span className="block text-base font-bold tracking-tight text-slate-900">Vynce</span>
-        <span className="block text-[11px] font-medium text-slate-400">CRM Imobiliário</span>
+        <span className="block font-display text-base font-bold tracking-tight text-white">
+          Vynce
+        </span>
+        <span className="block text-[11px] font-medium text-white/60">CRM Imobiliário</span>
       </div>
     </Link>
   );
@@ -38,13 +40,13 @@ function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col border-r border-slate-200 bg-white lg:flex">
-      <div className="flex h-16 items-center border-b border-slate-100 px-5">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-64 flex-col bg-gradient-to-b from-[#4ea17f] to-[#1f5d54] lg:flex">
+      <div className="flex h-16 items-center border-b border-white/10 px-5">
         <Logo />
       </div>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
-        <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+        <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-wider text-white/50">
           Menu
         </p>
         {NAV.map((item) => {
@@ -56,12 +58,12 @@ function Sidebar() {
               <Icon
                 className={cn(
                   'h-[18px] w-[18px] shrink-0',
-                  active ? 'text-brand-600' : 'text-slate-400 group-hover:text-slate-600',
+                  active ? 'text-white' : 'text-white/70 group-hover:text-white',
                 )}
               />
               <span className="flex-1">{item.label}</span>
               {item.soon && (
-                <span className="rounded-full bg-slate-100 px-1.5 py-0.5 text-[10px] font-medium text-slate-400">
+                <span className="rounded-full bg-white/15 px-1.5 py-0.5 text-[10px] font-medium text-white/70">
                   em breve
                 </span>
               )}
@@ -72,7 +74,7 @@ function Sidebar() {
             return (
               <span
                 key={item.href}
-                className="group flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-slate-400"
+                className="group flex cursor-not-allowed items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-white/50"
               >
                 {content}
               </span>
@@ -86,8 +88,8 @@ function Sidebar() {
               className={cn(
                 'group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
                 active
-                  ? 'bg-brand-50 text-brand-700'
-                  : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
+                  ? 'bg-white/20 text-white shadow-sm'
+                  : 'text-white/80 hover:bg-white/10 hover:text-white',
               )}
             >
               {content}
@@ -96,14 +98,14 @@ function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-slate-100 p-3">
+      <div className="border-t border-white/10 p-3">
         <div className="flex items-center gap-3 rounded-lg px-3 py-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-white">
             <UserRound className="h-5 w-5" />
           </span>
           <div className="min-w-0 flex-1 leading-tight">
-            <p className="truncate text-sm font-medium text-slate-700">Administrador</p>
-            <p className="truncate text-xs text-slate-400">admin@vynce.com.br</p>
+            <p className="truncate text-sm font-medium text-white">Administrador</p>
+            <p className="truncate text-xs text-white/60">admin@vynce.com.br</p>
           </div>
         </div>
       </div>
@@ -120,7 +122,7 @@ function Topbar() {
   return (
     <header className="sticky top-0 z-20 flex h-16 items-center gap-2 border-b border-slate-200 bg-white/80 px-4 backdrop-blur lg:px-8">
       <div className="flex items-center gap-1.5 text-sm text-slate-400 lg:hidden">
-        <span className="font-semibold text-slate-700">Vynce</span>
+        <span className="font-display font-semibold text-brand-700">Vynce</span>
       </div>
       <div className="hidden items-center gap-1.5 text-sm text-slate-400 lg:flex">
         <span>Vynce</span>

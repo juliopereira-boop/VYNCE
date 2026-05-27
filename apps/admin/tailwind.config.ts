@@ -9,24 +9,26 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Vynce brand — violeta/índigo: sofisticação e confiança.
+        // Vynce brand — verde-petróleo/esmeralda (inspirado em CRMs imobiliários
+        // de alto padrão): confiança, sofisticação e modernidade.
         brand: {
-          50: '#f5f3ff',
-          100: '#ede9fe',
-          200: '#ddd6fe',
-          300: '#c4b5fd',
-          400: '#a78bfa',
-          500: '#8b5cf6',
-          600: '#7c3aed',
-          700: '#6d28d9',
-          800: '#5b21b6',
-          900: '#4c1d95',
-          950: '#2e1065',
+          50: '#e9faf4',
+          100: '#c7f1e4',
+          200: '#93e6cd',
+          300: '#57d6b2',
+          400: '#1ec39a',
+          500: '#00b389',
+          600: '#009e8a',
+          700: '#1f7a6b',
+          800: '#006b5c',
+          900: '#1f3a35',
+          950: '#0f2420',
         },
       },
       fontFamily: {
         sans: [
           'Inter',
+          'Lato',
           'ui-sans-serif',
           'system-ui',
           '-apple-system',
@@ -36,9 +38,11 @@ const config: Config = {
           'Arial',
           'sans-serif',
         ],
+        display: ['Sora', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       boxShadow: {
-        card: '0 1px 2px 0 rgb(15 23 42 / 0.04), 0 1px 3px 0 rgb(15 23 42 / 0.06)',
+        card: '0 3px 24px 0 rgb(15 23 42 / 0.06)',
+        'card-hover': '0 8px 30px 0 rgb(15 23 42 / 0.12)',
       },
     },
   },

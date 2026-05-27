@@ -68,13 +68,13 @@ export default async function DashboardPage() {
           label="Imobiliárias"
           value={stats.imobiliarias}
           icon={Building2}
-          accent="bg-indigo-50 text-indigo-600"
+          accent="bg-brand-50 text-brand-700"
         />
         <StatCard
           label="Houses"
           value={stats.houses}
           icon={Home}
-          accent="bg-emerald-50 text-emerald-600"
+          accent="bg-amber-50 text-amber-600"
         />
         <StatCard
           label="Ativas"
