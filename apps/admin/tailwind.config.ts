@@ -27,6 +27,7 @@ const config: Config = {
       },
       fontFamily: {
         sans: [
+          'var(--font-inter)',
           'Inter',
           'Lato',
           'ui-sans-serif',
@@ -38,7 +39,14 @@ const config: Config = {
           'Arial',
           'sans-serif',
         ],
-        display: ['Sora', 'Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        display: [
+          'var(--font-sora)',
+          'var(--font-inter)',
+          'Sora',
+          'ui-sans-serif',
+          'system-ui',
+          'sans-serif',
+        ],
       },
       boxShadow: {
         card: '0 3px 24px 0 rgb(15 23 42 / 0.06)',
