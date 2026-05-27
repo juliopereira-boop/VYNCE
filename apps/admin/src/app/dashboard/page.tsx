@@ -1,12 +1,4 @@
-import {
-  BarChart3,
-  Building2,
-  Home,
-  LifeBuoy,
-  Mail,
-  Plus,
-  Users,
-} from 'lucide-react';
+import { AlertTriangle, BarChart3, Building2, Home, LifeBuoy, Mail, Plus, Users } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { cn } from '@vynce/ui';
@@ -99,10 +91,24 @@ function FeatureCard({ feature }: { feature: Feature }) {
 }
 
 export default async function CadastrosHome() {
-  const [stats, recent] = await Promise.all([
-    getAgencyStats(),
-    listAgencies({ page: 1, pageSize: 4 }),
-  ]);
+  let stats = { total: 0, imobiliarias: 0, houses: 0, active: 0 };
+  let recent: Awaited<ReturnType<typeof listAgencies>> = {
+    items: [],
+    total: 0,
+    page: 1,
+    pageSize: 4,
+    totalPages: 1,
+  };
+  let dbError = false;
+
+  try {
+    [stats, recent] = await Promise.all([
+      getAgencyStats(),
+      listAgencies({ page: 1, pageSize: 4 }),
+    ]);
+  } catch {
+    dbError = true;
+  }
 
   return (
     <>
@@ -110,6 +116,21 @@ export default async function CadastrosHome() {
         title="Cadastros"
         description="Aqui você encontra as funcionalidades do módulo de cadastros."
       />
+
+      {dbError && (
+        <div className="mb-6 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+          <div>
+            <p className="font-semibold">Banco de dados não conectado</p>
+            <p className="mt-0.5 text-amber-700">
+              Configure as variáveis <code className="rounded bg-amber-100 px-1">DATABASE_URL</code>{' '}
+              e <code className="rounded bg-amber-100 px-1">DIRECT_URL</code> na Vercel e aplique as
+              migrations (ou rode o script <code className="rounded bg-amber-100 px-1">supabase-setup.sql</code>{' '}
+              no SQL Editor). As funcionalidades abaixo já estão disponíveis.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-8 lg:col-span-2">

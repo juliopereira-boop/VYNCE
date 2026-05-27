@@ -1,15 +1,6 @@
 'use client';
 
-import {
-  BarChart3,
-  ChevronDown,
-  ChevronRight,
-  HelpCircle,
-  LayoutGrid,
-  MessageSquare,
-  Search,
-  Settings,
-} from 'lucide-react';
+import { ChevronRight, HelpCircle, LayoutGrid, MessageSquare, Search } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ReactNode } from 'react';
@@ -25,11 +16,6 @@ type ModuleItem = {
 
 const MODULES: ModuleItem[] = [
   { label: 'Cadastros', href: '/dashboard', match: ['/dashboard', '/imobiliarias', '/corretores'] },
-  { label: 'Comercial', soon: true },
-  { label: 'Disponibilidade', soon: true },
-  { label: 'Reservas', soon: true },
-  { label: 'Financeiro', soon: true },
-  { label: 'Relacionamento', soon: true },
 ];
 
 function Brand() {
@@ -99,56 +85,29 @@ function ModuleNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky top-16 z-30 border-b border-brand-900/10 bg-gradient-to-r from-brand-700 to-brand-800 shadow-sm">
-      <div className="flex h-12 items-stretch">
-        <ul className="flex items-stretch">
-          {MODULES.map((mod) => {
-            const active = mod.match?.some((m) => pathname.startsWith(m));
-            const base =
-              'flex items-center gap-1.5 px-4 text-sm font-medium transition-colors whitespace-nowrap';
-
-            if (mod.soon) {
-              return (
-                <li key={mod.label}>
-                  <span
-                    className={cn(base, 'cursor-not-allowed text-white/55')}
-                    title="Em breve"
-                  >
-                    {mod.label}
-                    <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-                  </span>
-                </li>
-              );
-            }
-
-            return (
-              <li key={mod.label}>
-                <Link
-                  href={mod.href!}
-                  className={cn(
-                    base,
-                    active
-                      ? 'bg-black/15 text-white shadow-inner'
-                      : 'text-white/85 hover:bg-white/10 hover:text-white',
-                  )}
-                >
-                  {mod.label}
-                  <ChevronDown className="h-3.5 w-3.5 opacity-70" />
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-
-        <div className="ml-auto flex items-center gap-1 pr-3">
-          <span className="flex cursor-not-allowed items-center gap-1.5 px-3 text-sm font-medium text-white/70">
-            <BarChart3 className="h-4 w-4" />
-            Relatórios
-          </span>
-          <span className="flex h-8 w-8 cursor-not-allowed items-center justify-center rounded-lg text-white/70">
-            <Settings className="h-4 w-4" />
-          </span>
-        </div>
+    <nav className="sticky top-16 z-30 bg-gradient-to-r from-brand-700 to-brand-800 shadow-sm">
+      <div className="flex h-12 items-stretch px-3">
+        {MODULES.map((mod) => {
+          const active = mod.match?.some((m) => pathname.startsWith(m));
+          return (
+            <Link
+              key={mod.label}
+              href={mod.href!}
+              className={cn(
+                'group relative flex items-center px-5 text-sm font-semibold tracking-wide transition-colors',
+                active ? 'text-white' : 'text-white/80 hover:text-white',
+              )}
+            >
+              {mod.label}
+              <span
+                className={cn(
+                  'absolute inset-x-4 bottom-0 h-[3px] rounded-t-full transition-all',
+                  active ? 'bg-white' : 'bg-transparent group-hover:bg-white/40',
+                )}
+              />
+            </Link>
+          );
+        })}
       </div>
     </nav>
   );
