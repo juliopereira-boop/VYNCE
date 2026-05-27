@@ -1,4 +1,4 @@
-import { Building2, Plus, Search } from 'lucide-react';
+import { AlertTriangle, Building2, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { Button, Card, Input, cn } from '@vynce/ui';
@@ -37,12 +37,20 @@ export default async function AgenciesListPage({ searchParams }: { searchParams:
     sp.type === 'IMOBILIARIA' || sp.type === 'HOUSE' ? (sp.type as EntityTypeValue) : 'ALL';
   const page = Math.max(1, Number(sp.page) || 1);
 
-  const { items, total, totalPages, pageSize } = await listAgencies({
-    search,
-    type,
+  let result: Awaited<ReturnType<typeof listAgencies>> = {
+    items: [],
+    total: 0,
     page,
     pageSize: 10,
-  });
+    totalPages: 1,
+  };
+  let dbError = false;
+  try {
+    result = await listAgencies({ search, type, page, pageSize: 10 });
+  } catch {
+    dbError = true;
+  }
+  const { items, total, totalPages, pageSize } = result;
 
   const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(total, page * pageSize);
@@ -61,6 +69,22 @@ export default async function AgenciesListPage({ searchParams }: { searchParams:
           </Link>
         }
       />
+
+      {dbError && (
+        <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+          <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0" />
+          <div>
+            <p className="font-semibold">Não foi possível carregar os dados</p>
+            <p className="mt-0.5 text-amber-700">
+              Verifique a conexão com o banco e se as tabelas existem. Abra{' '}
+              <a href="/api/health" className="font-medium underline" target="_blank" rel="noreferrer">
+                /api/health
+              </a>{' '}
+              para ver a causa exata.
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="inline-flex rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
